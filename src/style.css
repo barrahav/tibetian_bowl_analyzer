@@ -257,12 +257,23 @@ input:focus,select:focus,textarea:focus{border-color:#ae9255;box-shadow:0 0 0 3p
 .spectrogram-panel .plot-title{margin:0 0 7px}
 .plot-subtitle{margin:-2px 0 8px;color:#797262;font-size:11px;line-height:1.4}
 #liveSpectrogram,#resultSpectrogram{display:block;width:100%;height:230px;direction:ltr;touch-action:pan-y}
+#resultSpectrogram{touch-action:none;cursor:grab}
+#resultSpectrogram:active{cursor:grabbing}
+.spectrogram-tools{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin:10px 0 7px;direction:rtl}
+.spectrogram-axis-tools{display:flex;align-items:center;gap:5px;padding:3px 5px;border:1px solid var(--line,#e6e2d8);border-radius:12px;background:var(--surface,#fff)}
+.spectrogram-axis-tools>span{font-size:11px;color:var(--muted,#756d5e);padding:0 5px}
+.spectrogram-tools button{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:36px;min-height:34px;padding:4px 8px;border:1px solid var(--line,#e6e2d8);border-radius:8px;background:var(--surface,#fff);color:var(--ink,#29271f);font-family:inherit;font-size:15px;font-weight:600;line-height:1;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.spectrogram-tools button:hover{background:var(--surface-soft,#f7f4eb);border-color:var(--accent,#b28a38)}
+.spectrogram-tools button:active{transform:scale(.96)}
+.spectrogram-tools button:focus-visible{outline:2px solid var(--accent,#b28a38);outline-offset:2px}
+.spectrogram-tools button small{font-size:10px;color:var(--muted,#756d5e);font-weight:600}
+.spectrogram-tools [data-sgram="reset"]{font-size:18px;min-width:38px}
 .spectrogram-legend{display:flex;align-items:center;gap:9px;color:#756d5e;font-size:10px}
 .spectrogram-legend{direction:ltr}.spectrogram-legend span{unicode-bidi:plaintext}
 .spectrogram-legend i{display:block;flex:1;height:9px;border-radius:99px;background:linear-gradient(90deg,#050f2d,#0d2d6e,#166ca0,#25a58e,#a6cd4e,#fff6b8)}
 .spectrogram-result{margin:17px 0 0}
 .spectrogram-result .spectrogram-legend{padding:0 2px 4px}
-@media(max-width:800px){.spectrogram-toggle{width:100%;min-height:44px;font-size:13px}.spectrogram-panel{padding:10px}.spectrogram-panel #liveSpectrogram,#resultSpectrogram{height:210px}.spectrogram-legend{font-size:11px}}
+@media(max-width:800px){.spectrogram-toggle{width:100%;min-height:44px;font-size:13px}.spectrogram-panel{padding:10px}.spectrogram-panel #liveSpectrogram,#resultSpectrogram{height:210px}.spectrogram-legend{font-size:11px}.spectrogram-tools{justify-content:space-between;gap:6px}.spectrogram-axis-tools{gap:3px;padding:3px}.spectrogram-axis-tools>span{font-size:10px}.spectrogram-tools button{min-height:40px;min-width:38px}}
 @media(max-width:800px){.analysis-title-group{align-items:stretch;flex:1;flex-direction:column;gap:8px}.analysis-dialog-head{align-items:flex-start}.analysis-name-field{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px}.analysis-name-field input{width:100%;min-height:40px}.analysis-dialog-head h2{font-size:16px}}
 .saved-rename{display:grid;grid-template-columns:minmax(120px,1fr) auto;align-items:end;gap:8px 10px}.saved-rename label{display:grid;gap:5px;color:#756d5e;font-size:11px;font-weight:550}.saved-rename input{width:100%;min-height:40px;padding:7px 10px;border:1px solid #d6c79f;border-radius:9px;background:#fffefa;color:#342d21;font:inherit;font-size:14px}.saved-rename input:focus{outline:0;border-color:#ae9255;box-shadow:0 0 0 3px #d7bf8040}.rename-actions{display:flex;gap:5px}.rename-actions button{min-height:38px;padding:7px 12px;border:1px solid #dfd4bc;border-radius:999px;background:#fffefa;color:#60491f;font:550 12px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.rename-actions button:hover{background:#f7f3e8}.rename-actions button:focus-visible{outline:3px solid #c8a95e;outline-offset:2px}@media(max-width:520px){.saved-rename{grid-template-columns:1fr}.rename-actions{justify-content:flex-start}}
 
