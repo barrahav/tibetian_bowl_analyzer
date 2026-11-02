@@ -8,6 +8,7 @@ let language=localStorage.getItem('resonance.language')||'he';
 let stage='measure';
 const he={
   'Estimate with limitations':'אומדן עם מגבלות',
+  'Rough decay estimate':'אומדן דעיכה גס',
   'Measurement failed: no stable tonal component exceeded the SNR threshold':'המדידה נכשלה: לא זוהה צליל יציב שעבר את סף ה־SNR',
   'Insufficient data: no persistent, prominent components met the selection threshold':'אין די נתונים: לא נמצאו רכיבים בולטים ויציבים שעומדים בסף הבחירה',
   'Insufficient data for decay fit':'אין די נתונים להתאמת דעיכה',
@@ -144,7 +145,7 @@ function showResult(r){
     return `<div class="bar-item"><div class="bar-track"><div class="bar-fill ${c===strongestPower?'leader':''}" style="height:${Math.max(.5,level)}%" title="Power יחסי: ${(100*componentPower(c)/maxPower).toFixed(1)}%"></div></div><b class="bar-hz"><bdi dir="ltr">${c.frequency.toFixed(1)} Hz</bdi></b><span class="bar-note" dir="ltr">${noteLabel(note)}</span></div>`
   }).join('');
   const cards=ordered.map((c,i)=>{
-    const n=notePosition(c.frequency),fit=c.decay.fit,reliable=fit&&c.decay.status==='Estimate with limitations';
+    const n=notePosition(c.frequency),fit=c.decay.fit,reliable=fit&&['Estimate with limitations','Rough decay estimate'].includes(c.decay.status);
     const visibleSlope=reliable?`<div class="summary-slope"><span>שיפוע דעיכה</span><bdi dir="ltr">${fit.slopeDbPerSecond.toFixed(1)} dB/s</bdi></div>`:r.mode==='rim'?'<div class="summary-slope muted">דעיכה טבעית לא מחושבת בזמן שפשוף</div>':'<div class="summary-slope muted">אין אומדן דעיכה אמין</div>';
     const metrics=[
       ['יחס אות לרעש',`${snrDb(c).toFixed(1)} dB`,'הפרש Power בין הרכיב לרעש המקומי. נדרש סף של 10 dB כדי לזהות רכיב.'],
