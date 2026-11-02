@@ -273,3 +273,8 @@ input:focus,select:focus,textarea:focus{border-color:#ae9255;box-shadow:0 0 0 3p
 .component-play:disabled{opacity:.6;cursor:not-allowed}
 .component-playback small{color:#788278;font-size:11px;line-height:1.4}
 @media(max-width:800px){.component-playback{align-items:stretch;flex-direction:column;gap:6px}.component-play{width:100%;min-height:46px}.component-playback small{font-size:10px}}
+
+.bar-item{grid-template-rows:1fr auto auto auto}
+.bar-level{font-size:10px;color:#718074;font-variant-numeric:tabular-nums;white-space:nowrap}
+.summary-unit{font-variant-numeric:tabular-nums}
+@media(max-width:800px){.bar-level{font-size:9px}}
