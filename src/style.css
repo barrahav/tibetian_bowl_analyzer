@@ -287,3 +287,58 @@ input:focus,select:focus,textarea:focus{border-color:#ae9255;box-shadow:0 0 0 3p
 .bar-play[aria-pressed="true"]{background:#285441;border-color:#285441;color:#fff}
 .bar-play:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:800px){.bar-play{width:33px;height:33px}.bar-caption{gap:4px}}
+
+.saved-compare-action{display:flex;justify-content:flex-start;margin:0 0 14px}
+.saved-compare-action .secondary{min-height:42px;padding-inline:17px}
+.compare-panel{margin:0 0 22px;padding:clamp(15px,3vw,24px);border:1px solid #e4dbc3;border-radius:16px;background:#fffefa;box-shadow:0 8px 26px #4d3b1a0a}
+.compare-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}
+.compare-panel-head h3{margin:0;color:#3d3323;font-size:18px;font-weight:650}
+.compare-close{display:grid;place-items:center;width:36px;height:36px;border:1px solid #e5dcc8;border-radius:50%;background:#fffefa;color:#715a2c;font-size:22px}
+.compare-selectors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.compare-selectors label{display:grid;gap:7px;color:#756d5e;font-size:12px;font-weight:600}
+.compare-selectors select{min-width:0;width:100%;min-height:44px}
+.comparison-prompt,.comparison-unavailable,.comparison-error{margin:12px 0;padding:12px;border-radius:10px;background:#f7f4eb;color:#756d5e;font-size:13px}
+.comparison-error{background:#fbf0ed;color:#8b4938}
+.comparison-results{display:grid;gap:14px}
+.comparison-section{min-width:0;padding:16px;border:1px solid #e9e2d4;border-radius:13px;background:#fffefa}
+.comparison-heading{display:flex;align-items:flex-start;gap:11px;margin-bottom:15px}
+.comparison-kicker{display:grid;place-items:center;flex:none;width:29px;height:29px;border:1px solid #e4d7b9;border-radius:50%;background:#f8f4e9;color:#896d35;font-size:10px;font-weight:700}
+.comparison-heading h3{margin:1px 0 4px;color:#3d3323;font-size:16px;font-weight:650;letter-spacing:-.015em}
+.comparison-heading p{margin:0;color:#756d5e;font-size:11px;line-height:1.45}
+.comparison-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.comparison-metric{min-width:0;padding:12px;border:1px solid #eee8dc;border-radius:11px;background:#fcfaf5}
+.comparison-metric h4{margin:0 0 10px;color:#55472c;font-size:12px;font-weight:650}
+.harmony-meter{min-width:0}
+.harmony-meter-labels{display:flex;justify-content:space-between;gap:8px;margin-bottom:7px;color:#756d5e;font-size:10px;font-weight:600}
+.harmony-meter-track{position:relative;height:12px;border:1px solid #e5dfd2;border-radius:999px;background:linear-gradient(90deg,#587a4f 0%,#91a365 35%,#d1b65e 65%,#c77f52 82%,#a94d48 100%);direction:ltr}
+.harmony-meter-track i{position:absolute;top:50%;width:17px;height:17px;border:3px solid #fffefa;border-radius:50%;background:#332d21;box-shadow:0 1px 5px #2b241c55;transform:translate(-50%,-50%)}
+.harmony-meter-score{display:flex;align-items:baseline;gap:4px;margin-top:7px;color:#44381f;font-variant-numeric:tabular-nums}
+.harmony-meter-score strong{font-size:22px;line-height:1;font-weight:700}
+.harmony-meter-score>span{color:#756d5e;font-size:11px}
+.harmony-meter-score small{margin-inline-start:auto;color:#756d5e;font-size:10px}
+.comparison-pair{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:13px;padding-top:12px;border-top:1px solid #eee8dc;text-align:center}
+.comparison-pair>div{display:grid;gap:4px;min-width:110px}
+.comparison-pair>div small,.sustain-item small{overflow:hidden;color:#756d5e;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+.comparison-pair>div bdi{color:#3d3323;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.comparison-pair .comparison-link{color:#a28a59;font-size:17px}
+.comparison-pair>p{flex-basis:100%;margin:0;color:#675632;font-size:12px}
+.sustain-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sustain-item{display:grid;gap:4px;min-width:0}
+.sustain-item>bdi{color:#3d3323;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.sustain-item>span{color:#756d5e;font-size:10px;line-height:1.4}
+.sustain-verdict{margin:10px 0 0;padding-top:8px;border-top:1px solid #eee8dc;color:#6b5328;font-size:11px;font-weight:650}
+.compare-chart-wrap{margin-top:13px;padding:12px 10px 8px;border:1px solid #eee8dc;border-radius:11px;background:#fffefa}
+.compare-chart{display:block;width:100%;height:auto;overflow:visible}
+.compare-grid line{stroke:#ebe7df;stroke-width:1}
+.compare-grid text{fill:#756d5e;font:10px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.compare-spectrum{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.compare-spectrum-a{stroke:#927133}.compare-spectrum-b{stroke:#47788b}
+.compare-chart-legend{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:8px;color:#514938;font-size:11px}
+.compare-chart-legend span{display:inline-flex;align-items:center;gap:6px;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.compare-swatch{display:inline-block;width:10px;height:10px;flex:none;border-radius:50%}
+.compare-swatch.a{background:#927133}.compare-swatch.b{background:#47788b}
+.compare-chart-note{margin:8px 0 0;color:#837b6c;font-size:10px;text-align:center}
+@media(max-width:800px){.saved-compare-action{margin-bottom:11px}.saved-compare-action .secondary{width:100%;min-height:46px}.compare-panel{padding:12px;border-radius:13px}.compare-panel-head h3{font-size:16px}.compare-selectors{grid-template-columns:1fr;gap:9px;margin-bottom:13px}.comparison-section{padding:12px}.comparison-heading h3{font-size:15px}.comparison-columns{grid-template-columns:1fr;gap:9px}.comparison-metric{padding:10px}.comparison-pair{gap:7px}.comparison-pair>div{min-width:100px}.sustain-columns{gap:12px}.compare-chart-wrap{padding:7px 4px 7px}.compare-grid text{font-size:11px}.compare-chart-legend{gap:10px}.compare-chart-legend span{max-width:46%;font-size:10px}}
+@media(max-width:370px){.comparison-pair>div{min-width:85px}.comparison-pair>div bdi{font-size:13px}.compare-chart-note{font-size:9px}}
+.harmony-meter-labels{direction:ltr}
+.harmony-meter-labels span{unicode-bidi:plaintext}
