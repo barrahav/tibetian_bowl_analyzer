@@ -24,8 +24,8 @@ function spectrum(x, sr, start, size) {
   for(let i=0;i<size;i++){const k=start+i, w=0.5-0.5*Math.cos(2*Math.PI*i/(size-1));re[i]=(x[k]||0)*w;}
   fft(re,im); return Array.from({length:size/2},(_,i)=>Math.hypot(re[i],im[i]));
 }
-function peaksFor(x,sr,start,size){
-  const m=spectrum(x,sr,start,size), df=sr/size, peaks=[];
+function peaksFromMagnitude(m,sr,size){
+  const df=sr/size, peaks=[];
   for(let i=3;i<m.length-3;i++) if(m[i]>m[i-1]&&m[i]>=m[i+1]){
     const local=Math.max(1e-12, [...m.slice(i-12,i-3),...m.slice(i+4,i+13)].sort((a,b)=>a-b)[8]||1e-12);
     const snrDb=20*Math.log10(Math.max(m[i],1e-12)/local);
@@ -35,6 +35,7 @@ function peaksFor(x,sr,start,size){
   }
   return peaks.sort((a,b)=>b.amplitude-a.amplitude);
 }
+function peaksFor(x,sr,start,size){return peaksFromMagnitude(spectrum(x,sr,start,size),sr,size)}
 function envelope(x,sr,f,hop){
   const radius=Math.max(128,Math.round(sr*0.06)), times=[], amps=[];
   // Narrowband complex demodulation with a Hann low-pass window; independent envelope per component.
@@ -55,10 +56,11 @@ function fitDecay(env,noiseAmp){
 }
 export function analyze(channels,sampleRate,mode='soft'){
   const p=preprocess(channels,sampleRate), x=p.x, size=Math.min(16384,2**Math.floor(Math.log2(x.length))), start=Math.max(0,Math.floor((x.length-size)*0.35));
+  const windowStarts=Array.from({length:4},(_,w)=>Math.floor(w*(x.length-size)/3)),windowMagnitudes=windowStarts.map(at=>spectrum(x,sampleRate,at,size));
   const raw=peaksFor(x,sampleRate,start,size), nyquist=sampleRate/2;
   const candidates=[];
   for(const pk of raw){if(pk.frequency<35||pk.frequency>Math.min(8000,nyquist)||candidates.some(q=>Math.abs(q.frequency-pk.frequency)<Math.max(12,pk.frequency*.012)))continue;
-    let persistence=0, deviations=[]; for(let w=0;w<4;w++){const at=Math.floor(w*(x.length-size)/3), local=peaksFor(x,sampleRate,at,size).filter(z=>Math.abs(z.frequency-pk.frequency)<Math.max(15,pk.frequency*.015)); if(local.length){persistence++;deviations.push(local[0].frequency);}}
+    let persistence=0, deviations=[]; for(let w=0;w<4;w++){const local=peaksFromMagnitude(windowMagnitudes[w],sampleRate,size).filter(z=>Math.abs(z.frequency-pk.frequency)<Math.max(15,pk.frequency*.015)); if(local.length){persistence++;deviations.push(local[0].frequency);}}
     if(persistence<2)continue;
     const freq=deviations.reduce((a,b)=>a+b,0)/deviations.length;
     candidates.push({...pk,frequency:freq,persistence,score:pk.prominence+5*persistence});
@@ -70,6 +72,8 @@ export function analyze(channels,sampleRate,mode='soft'){
   const noiseAmp=Math.max(1e-7,p.rms*0.0002);
   const components=selected.map((pk,i)=>{const env=envelope(x,sampleRate,pk.frequency,hop),estimated=fitDecay(env,noiseAmp),decay=mode==='rim'?{...estimated,fit:null,status:'Sustained excitation; no natural decay inferred'}:estimated;return {id:String.fromCharCode(65+i),...pk,decay};});
   const dominant=components.reduce((a,b)=>!a||b.amplitude>a.amplitude?b:a,null), harmonic=components.length>=3&&components.slice(1).every((p,i)=>Math.abs(p.frequency/components[0].frequency-Math.round(p.frequency/components[0].frequency))<0.035);
-  const bins=spectrum(x,sampleRate,start,size), spec=bins.map((a,i)=>({f:i*sampleRate/size,db:20*Math.log10(Math.max(a,1e-9))})).filter((_,i)=>i%2===0);
+  const powerWindows=windowMagnitudes.map(window=>window.map(a=>a*a));
+  const medianPower=Array.from({length:size/2},(_,i)=>{const values=powerWindows.map(window=>window[i]).sort((a,b)=>a-b);return (values[1]+values[2])/2});
+  const spec=medianPower.map((power,i)=>({f:i*sampleRate/size,db:10*Math.log10(Math.max(power,1e-18))})).filter((_,i)=>i%2===0);
   return {...p,mode,fftSize:size,binSpacing:sampleRate/size,snrThresholdDb:SNR_THRESHOLD_DB,spectrumRangeHz,components,dominant:dominant?.id||null,lowest:components[0]?.id||null,candidateFundamental:harmonic?components[0].id:null, fundamentalStatus:harmonic?'Candidate; harmonic evidence present':'Undetermined; no sufficient harmonic evidence',spectrum:spec,quality:components.length?'Estimate with limitations':'Measurement failed: no stable tonal component exceeded the SNR threshold', warnings:[...p.warnings,...(mode==='rim'?['Rim playing remains sustained excitation: no natural decay is fitted during rubbing. Record the release clearly for any post-rub decay estimate.']:[])]};
 }
