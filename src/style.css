@@ -392,3 +392,13 @@ input:focus,select:focus,textarea:focus{border-color:#ae9255;box-shadow:0 0 0 3p
 .brand .mark .bowl-rim{fill:#f2e7ca;stroke:#9a7733;stroke-width:1.7}
 .brand .mark .bowl-body{fill:none;stroke:#806126;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .brand .mark .bowl-highlight{fill:none;stroke:#c3a55e;stroke-width:1.5;stroke-linecap:round;opacity:.85}
+
+/* Live sound visualization: a bowl with input-responsive golden waves */
+#live{display:block;width:100%;height:150px;margin:10px 0 4px;border:1px solid #e9e1cf;border-radius:14px;background:linear-gradient(180deg,#fffefa,#f7f2e7)}
+@media(max-width:800px){#live{height:132px;margin-block:9px 3px;border-radius:12px}}
+@media(prefers-reduced-motion:reduce){#live{scroll-behavior:auto}}
+.workflow.recording #live{height:150px;margin:10px 0 4px}
+@media(max-width:800px){.workflow.recording #live{height:132px;margin:9px 0 3px}}
+.workflow #live{display:none}
+.workflow.recording #live{display:block;height:150px}
+@media(max-width:800px){.workflow.recording #live{height:100px}}
