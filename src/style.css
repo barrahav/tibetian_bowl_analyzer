@@ -342,3 +342,15 @@ input:focus,select:focus,textarea:focus{border-color:#ae9255;box-shadow:0 0 0 3p
 @media(max-width:370px){.comparison-pair>div{min-width:85px}.comparison-pair>div bdi{font-size:13px}.compare-chart-note{font-size:9px}}
 .harmony-meter-labels{direction:ltr}
 .harmony-meter-labels span{unicode-bidi:plaintext}
+
+
+/* Bowl identity and duplicate-name feedback */
+.analysis-heading{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.analysis-bowl-name{color:#75633b;font-size:14px;font-weight:600;overflow-wrap:anywhere}
+.field-error{display:block;margin:6px 0 0;color:#a43b32;font-size:12px;line-height:1.45}
+.field-error[hidden]{display:none!important}
+.workflow>#bowlName[aria-invalid="true"],.analysis-name-field input[aria-invalid="true"],.saved-rename input[aria-invalid="true"]{border-color:#b9473d;box-shadow:0 0 0 2px #b9473d20}
+.analysis-name-field{align-items:start}
+.analysis-name-field .field-error{grid-column:1/-1;margin:0}
+.saved-rename .rename-error{grid-column:1/-1}
+@media(max-width:800px){.analysis-heading{align-items:flex-start;flex-direction:column;gap:2px}.analysis-bowl-name{font-size:12px}.analysis-name-field .field-error{grid-column:1/-1}}
