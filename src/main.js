@@ -175,7 +175,7 @@ function showResult(r){
   const componentDb=c=>10*Math.log10(Math.max(componentPower(c)/maxPower,1e-12));
   const perceivedPeak=Math.max(...ordered.map(c=>componentDb(c)+iso226PerceptualCorrection(c.frequency)));
   const summaryDb=c=>dominantDisplayMode==='perceived'?componentDb(c)+iso226PerceptualCorrection(c.frequency)-perceivedPeak:componentDb(c);
-  const summaryModeLabel=mode=>language==='he'?(mode==='perceived'?'עוצמה נתפסת':'עוצמה לא משוקללת'):(mode==='perceived'?'Perceived level':'Unweighted level');
+  const summaryModeLabel=mode=>language==='he'?(mode==='perceived'?'עוצמה נתפסת':'עוצמה נמדדת'):(mode==='perceived'?'Perceived level':'Unweighted level');
   const summaryUnitLabel=mode=>language==='he'?(mode==='perceived'?'אומדן יחסי לפי ISO 226 (40 phon) · לא dB SPL מכויל':'Power לא משוקלל · dB יחסי · לא dB SPL מכויל'):(mode==='perceived'?'Relative ISO 226 (40 phon) estimate · not calibrated dB SPL':'Unweighted power · relative dB · not calibrated dB SPL');
   const snrDb=c=>Number(c.snrDb??c.prominence)||0;
   const strongestDisplay=ordered.reduce((best,c)=>summaryDb(c)>summaryDb(best)?c:best,ordered[0]);
