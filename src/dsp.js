@@ -48,14 +48,14 @@ function fitDecay(env,noiseAmp){
   let end=levels.findIndex((v,i)=>i>refIdx&&v<=-25); if(end<0)end=levels.findIndex((v,i)=>i>refIdx&&amps[i]<=noiseAmp*2); if(end<0)end=levels.length-1;
   const begin=Math.min(levels.length-1,refIdx+2); let lo=begin,hi=end;
   // Fit a common early decay region, truncated at the estimated noise floor.
-  // A short, modest decay can still be useful for a bowl with a long sustain.
-  // Keep enough samples for a line fit, but avoid requiring a full 12 dB fall.
-  if(hi-lo<4)return {reference:ref,envelope:amps,relativeDb:levels,fit:null,status:'Insufficient data for decay fit'};
+  // A tentative trend is useful when the bowl sustains for a long time or its
+  // envelope fluctuates. Three samples are enough to show a rough slope.
+  if(hi-lo<2)return {reference:ref,envelope:amps,relativeDb:levels,fit:null,status:'Insufficient data for decay fit'};
   let sx=0,sy=0,sxx=0,sxy=0,n=0;for(let i=lo;i<=hi;i++){const t=times[i]-times[lo],y=levels[i];sx+=t;sy+=y;sxx+=t*t;sxy+=t*y;n++;}
   const slope=(n*sxy-sx*sy)/(n*sxx-sx*sx), intercept=(sy-slope*sx)/n;let ss=0,tot=0,mean=sy/n;for(let i=lo;i<=hi;i++){const t=times[i]-times[lo],y=levels[i];ss+=(y-(intercept+slope*t))**2;tot+=(y-mean)**2;}
   const r2=tot?1-ss/tot:0, range=levels[lo]-levels[hi];
   const fit={start:times[lo],end:times[hi],slopeDbPerSecond:slope,r2,rangeDb:range,t20:slope<0&&range>=18? -20/slope:null,t30:slope<0&&range>=27? -30/slope:null,t60:slope<0&&range>=27? -60/slope:null,points:times.slice(lo,hi+1).map((t,i)=>({t,db:intercept+slope*(t-times[lo])}))};
-  const status=slope<0&&r2>=0.72&&range>=6?'Estimate with limitations':'Decay fit is uncertain'; return {reference:ref,envelope:amps,relativeDb:levels,fit,status};
+  const status=Number.isFinite(slope)&&slope<0?'Rough decay estimate':'Decay fit is uncertain'; return {reference:ref,envelope:amps,relativeDb:levels,fit,status};
 }
 export function analyze(channels,sampleRate,mode='soft'){
   const p=preprocess(channels,sampleRate), x=p.x, size=Math.min(16384,2**Math.floor(Math.log2(x.length))), start=Math.max(0,Math.floor((x.length-size)*0.35));
