@@ -380,3 +380,8 @@ input:focus,select:focus,textarea:focus{border-color:#ae9255;box-shadow:0 0 0 3p
 #dominantModeDescription{max-width:380px;text-align:end;line-height:1.35}
 .bar-fill{transition:height .3s ease,background .2s ease}
 @media(max-width:600px){.summary-title{align-items:flex-start}.summary-title h3{width:100%}.dominant-controls{width:100%;align-items:stretch}.dominant-mode-toggle{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.dominant-mode-toggle button{min-height:40px;padding-inline:6px;font-size:11px}.summary-title #dominantModeDescription{max-width:none;text-align:start;font-size:10px}}
+
+/* Keep the decorative waveform below the mode selector. */
+.spectrum-summary .summary-title{position:relative;z-index:2;margin-bottom:12px}
+.spectrum-summary .summary-wave{inset:105px 8px 39px;height:calc(100% - 144px);z-index:0}
+@media(max-width:600px){.spectrum-summary .summary-title{margin-bottom:15px}.spectrum-summary .summary-wave{inset-block-start:142px;height:calc(100% - 181px)}}
