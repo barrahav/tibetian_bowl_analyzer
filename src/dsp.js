@@ -1,5 +1,5 @@
 // Local acoustic analysis. No mechanical-mode inference is made.
-export const SNR_THRESHOLD_DB = 10;
+export const SNR_THRESHOLD_DB = 20;
 export function preprocess(channels, sampleRate) {
   if (!channels?.length || channels[0].length < sampleRate * 0.5) throw new Error('Recording is too short (need at least 0.5 seconds).');
   const n = Math.min(...channels.map(c => c.length));
