@@ -310,7 +310,7 @@ input:focus,select:focus,textarea:focus{border-color:#ae9255;box-shadow:0 0 0 3p
 .comparison-metric h4{margin:0 0 10px;color:#55472c;font-size:12px;font-weight:650}
 .harmony-meter{min-width:0}
 .harmony-meter-labels{display:flex;justify-content:space-between;gap:8px;margin-bottom:7px;color:#756d5e;font-size:10px;font-weight:600}
-.harmony-meter-track{position:relative;height:12px;border:1px solid #e5dfd2;border-radius:999px;background:linear-gradient(90deg,#587a4f 0%,#91a365 35%,#d1b65e 65%,#c77f52 82%,#a94d48 100%);direction:ltr}
+.harmony-meter-track{position:relative;height:12px;border:1px solid #e5dfd2;border-radius:999px;background:linear-gradient(90deg,#a94d48 0%,#c77f52 18%,#d1b65e 45%,#91a365 72%,#587a4f 100%);direction:ltr}
 .harmony-meter-track i{position:absolute;top:50%;width:17px;height:17px;border:3px solid #fffefa;border-radius:50%;background:#332d21;box-shadow:0 1px 5px #2b241c55;transform:translate(-50%,-50%)}
 .harmony-meter-score{display:flex;align-items:baseline;gap:4px;margin-top:7px;color:#44381f;font-variant-numeric:tabular-nums}
 .harmony-meter-score strong{font-size:22px;line-height:1;font-weight:700}
