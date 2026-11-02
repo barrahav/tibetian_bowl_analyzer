@@ -343,7 +343,6 @@ input:focus,select:focus,textarea:focus{border-color:#ae9255;box-shadow:0 0 0 3p
 .harmony-meter-labels{direction:ltr}
 .harmony-meter-labels span{unicode-bidi:plaintext}
 
-
 /* Bowl identity and duplicate-name feedback */
 .analysis-heading{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .analysis-bowl-name{color:#75633b;font-size:14px;font-weight:600;overflow-wrap:anywhere}
@@ -354,3 +353,17 @@ input:focus,select:focus,textarea:focus{border-color:#ae9255;box-shadow:0 0 0 3p
 .analysis-name-field .field-error{grid-column:1/-1;margin:0}
 .saved-rename .rename-error{grid-column:1/-1}
 @media(max-width:800px){.analysis-heading{align-items:flex-start;flex-direction:column;gap:2px}.analysis-bowl-name{font-size:12px}.analysis-name-field .field-error{grid-column:1/-1}}
+
+/* Simple visual sustain comparison */
+.comparison-note{display:block;color:#786d58;font-size:11px;line-height:1.35}
+.comparison-note bdi{font-variant-numeric:tabular-nums}
+.sustain-visual{display:grid;gap:9px;margin-top:4px}
+.sustain-row{display:grid;grid-template-columns:minmax(75px,34%) minmax(0,1fr);align-items:center;gap:8px}
+.sustain-row>span{overflow:hidden;color:#514633;font-size:11px;font-weight:550;text-overflow:ellipsis;white-space:nowrap}
+.sustain-track{height:13px;overflow:hidden;border-radius:999px;background:#eee9df}
+.sustain-track i{display:block;height:100%;min-width:3px;border-radius:inherit;background:linear-gradient(90deg,#b79a5b,#725521);transition:width .25s ease}
+.sustain-row:nth-child(2) .sustain-track i{background:linear-gradient(90deg,#d1bb83,#94763c)}
+.sustain-scale{display:flex;justify-content:space-between;padding-inline-start:calc(34% + 8px);color:#837963;font-size:10px}
+.sustain-verdict{margin:12px 0 0;padding:9px 11px;border-radius:9px;background:#f4f0e6;color:#5d4922;font-size:13px;font-weight:650;text-align:center}
+.sustain-verdict bdi{font-variant-numeric:tabular-nums;font-size:15px}
+@media(max-width:800px){.sustain-row{grid-template-columns:minmax(68px,36%) minmax(0,1fr);gap:7px}.sustain-scale{padding-inline-start:calc(36% + 7px)}.comparison-note{font-size:10px}.sustain-verdict{font-size:12px}}
