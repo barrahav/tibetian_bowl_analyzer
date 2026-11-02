@@ -105,6 +105,7 @@ function showResult(r){
   if(!r.components?.length){out.innerHTML=`<div class="measurement-failed"><span class="failed-icon">!</span><h3>המדידה נכשלה</h3><p>${esc(r.failureReason||'לא זוהה צליל ברור מהקערה. לא יוצגו תוצאות כדי למנוע ניתוח של רעש.')}</p><div class="failed-threshold"><span>סף זיהוי</span><bdi dir="ltr">SNR ≥ ${Number(r.snrThresholdDb)||SNR_THRESHOLD_DB} dB</bdi></div><button class="primary" id="retryMeasurement">נסו שוב בחדר שקט והקישו פעם אחת</button></div>`;$('#retryMeasurement').onclick=()=>$('#analysisDialog').close();return}
   const ordered=[...r.components].sort((a,b)=>b.amplitude-a.amplitude);
   const byFrequency=[...r.components].sort((a,b)=>a.frequency-b.frequency);
+  const maxAmp=Math.max(...ordered.map(c=>c.amplitude),1e-12);
   const snrDb=c=>Math.max(0,Number(c.snrDb??c.prominence)||0);
   const maxSnrDb=Math.max(...byFrequency.map(snrDb),1e-12);
   const strongestSnr=byFrequency.reduce((best,c)=>snrDb(c)>snrDb(best)?c:best,byFrequency[0]);
