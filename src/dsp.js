@@ -1,5 +1,12 @@
 // Local acoustic analysis. No mechanical-mode inference is made.
 export const SNR_THRESHOLD_DB = 20;
+// ISO 226:2023 equal-loudness correction at 40 phon; interpolate in log frequency.
+const iso226Frequencies=[20,25,31.5,40,50,63,80,100,125,160,200,250,315,400,500,630,800,1000,1250,1600,2000,2500,3150,4000,5000,6300,8000,10000,12500];
+const iso226Alpha=[.635,.602,.569,.537,.509,.482,.456,.433,.412,.391,.373,.357,.343,.330,.320,.311,.303,.300,.295,.292,.290,.290,.289,.289,.289,.293,.303,.323,.354];
+const iso226Lu=[-31.5,-27.2,-23.1,-19.3,-16.1,-13.1,-10.4,-8.2,-6.3,-4.6,-3.2,-2.1,-1.2,-.5,0,.4,.5,0,-2.7,-4.2,-1.2,1.4,2.3,1,-2.3,-7.2,-11.2,-10.9,-3.5];
+const iso226Tf=[78.1,68.7,59.5,51.1,44,37.5,31.5,26.5,22.1,17.9,14.4,11.4,8.6,6.2,4.4,3,2.2,2.4,3.5,1.7,-1.3,-4.2,-6,-5.4,-1.5,6,12.6,13.9,12.3];
+const iso226FortyPhon=iso226Frequencies.map((_,i)=>{const alpha=iso226Alpha[i],loudnessTerm=Math.pow(4e-10,.3-alpha)*(Math.pow(10,.03*40)-Math.pow(10,.072))+Math.pow(10,alpha*(iso226Tf[i]+iso226Lu[i])/10);return 10/alpha*Math.log10(loudnessTerm)-iso226Lu[i]});
+export function iso226PerceptualCorrection(frequency){const f=Math.max(iso226Frequencies[0],Math.min(iso226Frequencies[iso226Frequencies.length-1],frequency));let i=0;while(i<iso226Frequencies.length-2&&iso226Frequencies[i+1]<f)i++;const mix=(Math.log(f)-Math.log(iso226Frequencies[i]))/(Math.log(iso226Frequencies[i+1])-Math.log(iso226Frequencies[i])),spl=iso226FortyPhon[i]+mix*(iso226FortyPhon[i+1]-iso226FortyPhon[i]);return 40-spl}
 export function preprocess(channels, sampleRate) {
   if (!channels?.length || channels[0].length < sampleRate * 0.5) throw new Error('Recording is too short (need at least 0.5 seconds).');
   const n = Math.min(...channels.map(c => c.length));
@@ -71,13 +78,14 @@ export function analyze(channels,sampleRate,mode='soft'){
     if(snrDb<SNR_THRESHOLD_DB)continue;
     candidates.push({...pk,frequency:freq,power,localNoisePower,snrDb,prominence:snrDb,persistence});
   }
-  candidates.sort((a,b)=>b.power-a.power);
+  const perceivedPower=component=>component.power*10**(iso226PerceptualCorrection(component.frequency)/10);
+  candidates.sort((a,b)=>perceivedPower(b)-perceivedPower(a));
   const relevantMax=candidates.filter(c=>c.snrDb>=SNR_THRESHOLD_DB).reduce((max,c)=>Math.max(max,c.frequency),0);
   const spectrumRangeHz=Math.min(Math.min(8000,nyquist),Math.max(250,Math.ceil(relevantMax*1.3/250)*250));
   const selected=candidates.slice(0,3).sort((a,b)=>a.frequency-b.frequency), hop=Math.max(128,Math.round(sampleRate*0.02));
   const noiseAmp=Math.max(1e-7,p.rms*0.0002);
   const components=selected.map((pk,i)=>{const env=envelope(x,sampleRate,pk.frequency,hop),estimated=fitDecay(env,noiseAmp),decay=mode==='rim'?{...estimated,fit:null,status:'Sustained excitation; no natural decay inferred'}:estimated;return {id:String.fromCharCode(65+i),...pk,decay};});
-  const dominant=components.reduce((a,b)=>!a||b.power>a.power?b:a,null), harmonic=components.length>=3&&components.slice(1).every((p,i)=>Math.abs(p.frequency/components[0].frequency-Math.round(p.frequency/components[0].frequency))<0.035);
+  const dominant=components.reduce((a,b)=>!a||perceivedPower(b)>perceivedPower(a)?b:a,null), harmonic=components.length>=3&&components.slice(1).every((p,i)=>Math.abs(p.frequency/components[0].frequency-Math.round(p.frequency/components[0].frequency))<0.035);
   const powerWindows=windowMagnitudes.map(window=>window.map(a=>a*a));
   const medianPower=Array.from({length:size/2},(_,i)=>{const values=powerWindows.map(window=>window[i]).sort((a,b)=>a-b);return (values[1]+values[2])/2});
   const spec=medianPower.map((power,i)=>({f:i*sampleRate/size,db:10*Math.log10(Math.max(power,1e-18))})).filter((_,i)=>i%2===0);
