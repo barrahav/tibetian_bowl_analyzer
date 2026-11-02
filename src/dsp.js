@@ -64,10 +64,12 @@ export function analyze(channels,sampleRate,mode='soft'){
     candidates.push({...pk,frequency:freq,persistence,score:pk.prominence+5*persistence});
   }
   candidates.sort((a,b)=>b.score-a.score);
+  const relevantMax=candidates.filter(c=>c.snrDb>=SNR_THRESHOLD_DB).reduce((max,c)=>Math.max(max,c.frequency),0);
+  const spectrumRangeHz=Math.min(Math.min(8000,nyquist),Math.max(250,Math.ceil(relevantMax*1.3/250)*250));
   const selected=candidates.slice(0,3).sort((a,b)=>a.frequency-b.frequency), hop=Math.max(128,Math.round(sampleRate*0.02));
   const noiseAmp=Math.max(1e-7,p.rms*0.0002);
   const components=selected.map((pk,i)=>{const env=envelope(x,sampleRate,pk.frequency,hop),estimated=fitDecay(env,noiseAmp),decay=mode==='rim'?{...estimated,fit:null,status:'Sustained excitation; no natural decay inferred'}:estimated;return {id:String.fromCharCode(65+i),...pk,decay};});
   const dominant=components.reduce((a,b)=>!a||b.amplitude>a.amplitude?b:a,null), harmonic=components.length>=3&&components.slice(1).every((p,i)=>Math.abs(p.frequency/components[0].frequency-Math.round(p.frequency/components[0].frequency))<0.035);
   const bins=spectrum(x,sampleRate,start,size), spec=bins.map((a,i)=>({f:i*sampleRate/size,db:20*Math.log10(Math.max(a,1e-9))})).filter((_,i)=>i%2===0);
-  return {...p,mode,fftSize:size,binSpacing:sampleRate/size,snrThresholdDb:SNR_THRESHOLD_DB,components,dominant:dominant?.id||null,lowest:components[0]?.id||null,candidateFundamental:harmonic?components[0].id:null, fundamentalStatus:harmonic?'Candidate; harmonic evidence present':'Undetermined; no sufficient harmonic evidence',spectrum:spec,quality:components.length?'Estimate with limitations':'Measurement failed: no stable tonal component exceeded the SNR threshold', warnings:[...p.warnings,...(mode==='rim'?['Rim playing remains sustained excitation: no natural decay is fitted during rubbing. Record the release clearly for any post-rub decay estimate.']:[])]};
+  return {...p,mode,fftSize:size,binSpacing:sampleRate/size,snrThresholdDb:SNR_THRESHOLD_DB,spectrumRangeHz,components,dominant:dominant?.id||null,lowest:components[0]?.id||null,candidateFundamental:harmonic?components[0].id:null, fundamentalStatus:harmonic?'Candidate; harmonic evidence present':'Undetermined; no sufficient harmonic evidence',spectrum:spec,quality:components.length?'Estimate with limitations':'Measurement failed: no stable tonal component exceeded the SNR threshold', warnings:[...p.warnings,...(mode==='rim'?['Rim playing remains sustained excitation: no natural decay is fitted during rubbing. Record the release clearly for any post-rub decay estimate.']:[])]};
 }
