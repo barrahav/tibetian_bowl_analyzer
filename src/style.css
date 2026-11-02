@@ -367,3 +367,16 @@ input:focus,select:focus,textarea:focus{border-color:#ae9255;box-shadow:0 0 0 3p
 .sustain-verdict{margin:12px 0 0;padding:9px 11px;border-radius:9px;background:#f4f0e6;color:#5d4922;font-size:13px;font-weight:650;text-align:center}
 .sustain-verdict bdi{font-variant-numeric:tabular-nums;font-size:15px}
 @media(max-width:800px){.sustain-row{grid-template-columns:minmax(68px,36%) minmax(0,1fr);gap:7px}.sustain-scale{padding-inline-start:calc(36% + 7px)}.comparison-note{font-size:10px}.sustain-verdict{font-size:12px}}
+
+/* Select raw or hearing-weighted display for dominant components */
+.summary-title{align-items:flex-start;flex-wrap:wrap}
+.dominant-controls{display:flex;flex-direction:column;align-items:flex-end;gap:5px;max-width:100%}
+.dominant-mode-toggle{display:inline-flex;gap:3px;padding:3px;border:1px solid #e5dece;border-radius:999px;background:#f7f4ec}
+.dominant-mode-toggle button{min-height:34px;padding:6px 11px;border:1px solid transparent;border-radius:999px;background:transparent;color:#746b5b;font:inherit;font-size:11px;font-weight:550;line-height:1.2;cursor:pointer;white-space:nowrap}
+.dominant-mode-toggle button[aria-pressed="true"]{border-color:#d8c89f;background:#fffefa;color:#60491f;box-shadow:0 1px 3px #34271912}
+.dominant-mode-toggle button:hover{color:#46381f}
+.dominant-mode-toggle button:focus-visible{outline:3px solid #c8a95e;outline-offset:2px}
+.dominant-mode-toggle button:active{transform:translateY(1px)}
+#dominantModeDescription{max-width:380px;text-align:end;line-height:1.35}
+.bar-fill{transition:height .3s ease,background .2s ease}
+@media(max-width:600px){.summary-title{align-items:flex-start}.summary-title h3{width:100%}.dominant-controls{width:100%;align-items:stretch}.dominant-mode-toggle{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.dominant-mode-toggle button{min-height:40px;padding-inline:6px;font-size:11px}.summary-title #dominantModeDescription{max-width:none;text-align:start;font-size:10px}}
