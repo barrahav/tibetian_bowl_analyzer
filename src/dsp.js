@@ -24,14 +24,15 @@ function spectrum(x, sr, start, size) {
   for(let i=0;i<size;i++){const k=start+i, w=0.5-0.5*Math.cos(2*Math.PI*i/(size-1));re[i]=(x[k]||0)*w;}
   fft(re,im); return Array.from({length:size/2},(_,i)=>Math.hypot(re[i],im[i]));
 }
+function localNoiseAmplitude(m,i){const values=[...m.slice(i-12,i-3),...m.slice(i+4,i+13)].sort((a,b)=>a-b);return Math.max(1e-12,values[8]||1e-12)}
 function peaksFromMagnitude(m,sr,size){
   const df=sr/size, peaks=[];
   for(let i=3;i<m.length-3;i++) if(m[i]>m[i-1]&&m[i]>=m[i+1]){
-    const local=Math.max(1e-12, [...m.slice(i-12,i-3),...m.slice(i+4,i+13)].sort((a,b)=>a-b)[8]||1e-12);
+    const local=localNoiseAmplitude(m,i);
     const snrDb=20*Math.log10(Math.max(m[i],1e-12)/local);
     if(snrDb<SNR_THRESHOLD_DB)continue;
     const d=0.5*(Math.log(Math.max(m[i-1],1e-12))-Math.log(Math.max(m[i+1],1e-12)))/(Math.log(Math.max(m[i-1],1e-12))-2*Math.log(Math.max(m[i],1e-12))+Math.log(Math.max(m[i+1],1e-12))||1);
-    peaks.push({frequency:(i+d)*df, amplitude:m[i], prominence:snrDb, snrDb, binSpacing:df});
+    peaks.push({frequency:(i+d)*df, amplitude:m[i], noiseAmplitude:local, prominence:snrDb, snrDb, binSpacing:df});
   }
   return peaks.sort((a,b)=>b.amplitude-a.amplitude);
 }
@@ -62,16 +63,19 @@ export function analyze(channels,sampleRate,mode='soft'){
   for(const pk of raw){if(pk.frequency<35||pk.frequency>Math.min(8000,nyquist)||candidates.some(q=>Math.abs(q.frequency-pk.frequency)<Math.max(12,pk.frequency*.012)))continue;
     let persistence=0, deviations=[]; for(let w=0;w<4;w++){const local=peaksFromMagnitude(windowMagnitudes[w],sampleRate,size).filter(z=>Math.abs(z.frequency-pk.frequency)<Math.max(15,pk.frequency*.015)); if(local.length){persistence++;deviations.push(local[0].frequency);}}
     if(persistence<2)continue;
-    const freq=deviations.reduce((a,b)=>a+b,0)/deviations.length;
-    candidates.push({...pk,frequency:freq,persistence,score:pk.prominence+5*persistence});
+    const freq=deviations.reduce((a,b)=>a+b,0)/deviations.length,bin=Math.max(3,Math.min(size/2-4,Math.round(freq*size/sampleRate)));
+    const powerValues=windowMagnitudes.map(window=>window[bin]**2).sort((a,b)=>a-b),noiseValues=windowMagnitudes.map(window=>localNoiseAmplitude(window,bin)**2).sort((a,b)=>a-b);
+    const power=(powerValues[1]+powerValues[2])/2,localNoisePower=(noiseValues[1]+noiseValues[2])/2,snrDb=10*Math.log10(power/Math.max(localNoisePower,1e-24));
+    if(snrDb<SNR_THRESHOLD_DB)continue;
+    candidates.push({...pk,frequency:freq,power,localNoisePower,snrDb,prominence:snrDb,persistence});
   }
-  candidates.sort((a,b)=>b.score-a.score);
+  candidates.sort((a,b)=>b.power-a.power);
   const relevantMax=candidates.filter(c=>c.snrDb>=SNR_THRESHOLD_DB).reduce((max,c)=>Math.max(max,c.frequency),0);
   const spectrumRangeHz=Math.min(Math.min(8000,nyquist),Math.max(250,Math.ceil(relevantMax*1.3/250)*250));
   const selected=candidates.slice(0,3).sort((a,b)=>a.frequency-b.frequency), hop=Math.max(128,Math.round(sampleRate*0.02));
   const noiseAmp=Math.max(1e-7,p.rms*0.0002);
   const components=selected.map((pk,i)=>{const env=envelope(x,sampleRate,pk.frequency,hop),estimated=fitDecay(env,noiseAmp),decay=mode==='rim'?{...estimated,fit:null,status:'Sustained excitation; no natural decay inferred'}:estimated;return {id:String.fromCharCode(65+i),...pk,decay};});
-  const dominant=components.reduce((a,b)=>!a||b.amplitude>a.amplitude?b:a,null), harmonic=components.length>=3&&components.slice(1).every((p,i)=>Math.abs(p.frequency/components[0].frequency-Math.round(p.frequency/components[0].frequency))<0.035);
+  const dominant=components.reduce((a,b)=>!a||b.power>a.power?b:a,null), harmonic=components.length>=3&&components.slice(1).every((p,i)=>Math.abs(p.frequency/components[0].frequency-Math.round(p.frequency/components[0].frequency))<0.035);
   const powerWindows=windowMagnitudes.map(window=>window.map(a=>a*a));
   const medianPower=Array.from({length:size/2},(_,i)=>{const values=powerWindows.map(window=>window[i]).sort((a,b)=>a-b);return (values[1]+values[2])/2});
   const spec=medianPower.map((power,i)=>({f:i*sampleRate/size,db:10*Math.log10(Math.max(power,1e-18))})).filter((_,i)=>i%2===0);
